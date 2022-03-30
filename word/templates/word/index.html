@@ -8,6 +8,10 @@
 </head>
 <body>
 <h1>今天要认真学习</h1>
+{% if words %}{% else %}
+    <div class="line">未添加词库</div>
+{% endif %}
+
 {% for word in words %}
     <div class="line">
         <div class="word">{{ word.word }}</div>
