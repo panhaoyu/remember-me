@@ -14,3 +14,4 @@ chardet
 pytz
 phy-django
 ebbinghaus
+peewee
