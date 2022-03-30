@@ -1,0 +1,15 @@
+django
+waitress
+whitenoise
+django-cors-headers
+django-rest-framework
+django-extensions
+djangorestframework-simplejwt
+django-filter
+mysqlclient
+requests
+pytest
+html2text
+chardet
+pytz
+phy-django
