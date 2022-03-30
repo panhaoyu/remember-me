@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="{% static "css/word/index.css" %}">
 </head>
 <body>
-<h1>今天要认真学习</h1>
+<h1>词库</h1>
+
 {% if words %}{% else %}
     <div class="line">未添加词库</div>
 {% endif %}
@@ -18,5 +19,6 @@
         <div class="translation">{{ word.translation }}</div>
     </div>
 {% endfor %}
+
 </body>
 </html>
