@@ -15,3 +15,9 @@ pytz
 phy-django
 ebbinghaus
 peewee
+pandas
+numpy
+scipy
+jupyter
+sympy
+matplotlib
