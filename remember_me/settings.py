@@ -35,8 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
-    'rest_framework',
+    'corsheaders', 'rest_framework', 'whitenoise', 'django_q', 'django_filters', 'django_extensions',
+    'django_admin_object_button', 'phy_django', 'django_dump_load_utf8', 'django_registration', 'django_json_widget',
     'word',
 ]
 
