@@ -1,24 +1,13 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>背单词</title>
-    <link rel="stylesheet" href="{% static "css/word/index.css" %}">
-</head>
-<body>
-<h1>词库</h1>
+{% extends 'word/base.html' %}
 
-{% if words %}{% else %}
-    <div class="line">未添加词库</div>
-{% endif %}
-
-{% for word in words %}
-    <div class="line">
-        <div class="word">{{ word.word }}</div>
-        <div class="translation">{{ word.translation }}</div>
-    </div>
-{% endfor %}
-
-</body>
-</html>
+{% block body %}
+    {% if words %}{% else %}
+        <p class="alert alert-warning">未添加词库</p>
+    {% endif %}
+    {% for word in words %}
+        <div class="line">
+            <div class="word">{{ word.word }}</div>
+            <div class="translation">{{ word.translation }}</div>
+        </div>
+    {% endfor %}
+{% endblock %}
