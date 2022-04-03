@@ -1,3 +1,6 @@
-from django.test import TestCase
+from phy_django.tests import TestCase
 
-# Create your tests here.
+
+class TestWordModel(TestCase):
+    def test_init(self):
+        print(12341)

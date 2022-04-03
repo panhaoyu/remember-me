@@ -16,10 +16,9 @@ class IndexView(BaseView):
         kwargs = super().get_context_data(**kwargs)
 
         word_list = self.request.session.get('word_list', [])
-        word_list = [WordModel.objects.get(id=word) for word in word_list]
+        word_list: list[WordModel] = [WordModel.objects.get(id=word) for word in word_list]
         if not word_list:
             word_list = WordModel.get_random(10)
             self.request.session['word_list'] = [word.id for word in word_list]
-        kwargs |= {'words': word_list}
 
-        return kwargs
+        return {'words': word_list, **kwargs}
