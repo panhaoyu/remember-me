@@ -7,4 +7,4 @@ from .models import WordModel
 @admin.register(WordModel)
 class WordAdmin(admin.ModelAdmin):
     list_display = ('id', 'word', 'translation', 'stage')
-    readonly_fields = ('created_datetime', 'modified_datetime')
+    # readonly_fields = ('created_datetime', 'modified_datetime')

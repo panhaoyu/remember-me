@@ -1,7 +1,7 @@
 import os
 
 import ebbinghaus
-from django.db import models
+from phy_django import models
 
 EBBINGHAUS_DATABASE = os.path.join(os.path.expanduser('~'), '.remember-me', 'word', 'ebbinghaus.db')
 ebbinghaus.set_database(EBBINGHAUS_DATABASE)
@@ -10,10 +10,12 @@ ebbinghaus.set_database(EBBINGHAUS_DATABASE)
 # Create your models here.
 
 class WordModel(models.Model):
+    class Meta(models.Model.BaseMeta):
+        verbose_name = '单词'
+
+    is_active = models.BooleanField(default=True)
     word = models.CharField(max_length=128)
     translation = models.TextField()
-    created_datetime = models.DateTimeField(auto_now_add=True)
-    modified_datetime = models.DateTimeField(auto_now=True)
 
     @classmethod
     def create_ebbinghaus(cls, word, translation):
