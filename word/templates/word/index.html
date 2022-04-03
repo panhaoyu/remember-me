@@ -18,7 +18,8 @@
                 audio.setAttribute('src', `http://localhost:37421/media/voices/${itemId}.mp3`)
             }
         </script>
-        <iframe allow="autoplay" class="hidden" src="http://localhost:37421/media/voices/3.mp3" style="display: none"></iframe>
+        <iframe allow="autoplay" class="hidden" src="http://localhost:37421/media/voices/3.mp3"
+                style="display: none"></iframe>
         <audio id="word-audio" class="hidden" src="" autoplay></audio>
         {% for word in words %}
             <div class="row my-2  word-and-translation">
@@ -35,22 +36,14 @@
             <a class="col-5 mx-2 btn btn-info" href="{% url "word:change-current-learning-set" %}">换一批</a>
         </div>
         <script>
-            async function sleep(seconds) {
-                return new Promise(resolve => setTimeout(resolve, seconds * 1000))
-            }
-
-            async function playAll() {
+            $(document).ready(async () => {
                 const word_ids = [
                     {% for word in words %}{{ word.id }}, {% endfor %}
                 ]
                 for (let id of word_ids) {
                     playVoice(id)
-                    await sleep(3)
+                    await new Promise(resolve => setTimeout(resolve, 3000))
                 }
-            }
-
-            $(document).ready(async () => {
-                await playAll()
             })
         </script>
     </div>
