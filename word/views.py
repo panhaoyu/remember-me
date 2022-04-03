@@ -1,5 +1,6 @@
 from django.http import HttpRequest
-from phy_django.views import TemplateView
+from django.urls import reverse_lazy
+from phy_django.views import TemplateView, RedirectView
 
 from .models import WordModel
 
@@ -24,3 +25,14 @@ class IndexView(BaseView):
             word_list = WordModel.get_random(10)
         self.request.session['word_list'] = [w.id for w in word_list]
         return {'words': word_list, **kwargs}
+
+
+class ChangeCurrentLearningSet(RedirectView):
+    """
+    程序通过session来记录当前的学习列表，本视图用于重新进行一次随机，生成一批学习列表。
+    """
+    url = reverse_lazy('word:index')
+
+    def get(self, request, *args, **kwargs):
+        self.request.session.pop('word_list', None)
+        return super().get(request, *args, **kwargs)

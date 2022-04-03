@@ -7,8 +7,9 @@
         {% endif %}
         <style>
             .word-and-translation {
-                font-size: 40px;
+                font-size: 30px;
                 font-family: 微软雅黑, sans-serif;
+                line-height: 80px;
             }
         </style>
         <script>
@@ -17,16 +18,40 @@
                 audio.setAttribute('src', `http://localhost:37421/media/voices/${itemId}.mp3`)
             }
         </script>
+        <iframe allow="autoplay" class="hidden" src="http://localhost:37421/media/voices/3.mp3" style="display: none"></iframe>
         <audio id="word-audio" class="hidden" src="" autoplay></audio>
         {% for word in words %}
             <div class="row my-2  word-and-translation">
-                <div class="col-4">{{ word.translation }}</div>
-                <div class="col-8">
+                <div class="col-3">{{ word.translation }}</div>
+                <div class="col-9">
                     <span onclick="playVoice({{ word.id }})" class="panhaoyu-icon-play-voice"
                           style="color: #50c4ff"></span>
                     {{ word.word }}
                 </div>
             </div>
         {% endfor %}
+        <div class="row" style="margin-top: 100px">
+            <button class="col-5 mx-2 btn btn-info" onclick="playAll()">全部播放</button>
+            <a class="col-5 mx-2 btn btn-info" href="{% url "word:change-current-learning-set" %}">换一批</a>
+        </div>
+        <script>
+            async function sleep(seconds) {
+                return new Promise(resolve => setTimeout(resolve, seconds * 1000))
+            }
+
+            async function playAll() {
+                const word_ids = [
+                    {% for word in words %}{{ word.id }}, {% endfor %}
+                ]
+                for (let id of word_ids) {
+                    playVoice(id)
+                    await sleep(3)
+                }
+            }
+
+            $(document).ready(async () => {
+                await playAll()
+            })
+        </script>
     </div>
 {% endblock %}
