@@ -29,7 +29,15 @@ class WordModel(models.Model):
             ebbinghaus.register(self.id)
 
     @classmethod
-    def get_random(cls, length):
+    def get_random(cls, length: int) -> list['WordModel']:
+        """获取随机的一批词汇。
+
+        Args:
+            length: 本批次的词汇量。
+
+        Returns:
+           这些词汇对象。
+        """
         id_list = ebbinghaus.random(length)
         obj_list = [cls.objects.get(id=obj_id) for obj_id in id_list]
         return obj_list

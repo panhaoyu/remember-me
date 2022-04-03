@@ -4,10 +4,16 @@
     {% if words %}{% else %}
         <p class="alert alert-warning">未添加词库</p>
     {% endif %}
+    <style>
+        .word-and-translation {
+            font-size: 30px;
+            font-family: 微软雅黑, sans-serif;
+        }
+    </style>
     {% for word in words %}
-        <div class="line">
-            <div class="word">{{ word.word }}</div>
-            <div class="translation">{{ word.translation }}</div>
+        <div class="row my-2  word-and-translation">
+            <div class="col-4">{{ word.translation }}</div>
+            <div class="col-8">{{ word.word }}</div>
         </div>
     {% endfor %}
 {% endblock %}
