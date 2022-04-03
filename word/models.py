@@ -16,6 +16,7 @@ class WordModel(models.Model):
     is_active = models.BooleanField(default=True)
     word = models.CharField(max_length=128)
     translation = models.TextField()
+    stage = models.SmallIntegerField(verbose_name='学习阶段')
 
     @classmethod
     def create_ebbinghaus(cls, word, translation):
@@ -43,7 +44,3 @@ class WordModel(models.Model):
         id_list = ebbinghaus.random(length)
         obj_list = [cls.objects.get(id=obj_id) for obj_id in id_list]
         return obj_list
-
-    @property
-    def stage(self):
-        return ebbinghaus.get_stage(self.id)

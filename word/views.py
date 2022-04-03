@@ -1,30 +1,30 @@
 from django.http import HttpRequest
 from django.urls import reverse_lazy
-from phy_django.views import TemplateView, RedirectView
+from django.views import generic
+from phy_django.views import RedirectView, ContextMixin
 
 from .models import WordModel
 
 
-class BaseView(TemplateView):
+class WordMixin(ContextMixin):
     site_name = 'Remember Me'
     request: HttpRequest
 
 
-class IndexView(BaseView):
+class IndexView(WordMixin, generic.ListView):
     page_title = '即将学习的词汇'
     page_description = 'Remember Me 的首页'
     template_name = 'word/index.html'
 
-    def get_context_data(self, **kwargs):
-        kwargs = super().get_context_data(**kwargs)
+    def get_queryset(self):
         word_ids = self.request.session.get('word_list', [])
         if word_ids:
-            word_data = {o.id: o for o in WordModel.objects.filter(id__in=word_ids)}
-            word_list = [word_data[i] for i in word_ids]
+            word_list = WordModel.objects.filter(id__in=word_ids)
         else:
-            word_list = WordModel.get_random(10)
+            word_list = WordModel.objects.order_by('stage')[:10]
         self.request.session['word_list'] = [w.id for w in word_list]
-        return {'words': word_list, **kwargs}
+        self.request.session['word_index'] = 0
+        return word_list
 
 
 class ChangeCurrentLearningSet(RedirectView):

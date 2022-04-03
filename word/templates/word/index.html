@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="container">
-        {% if words %}{% else %}
+        {% if object_list %}{% else %}
             <p class="alert alert-warning">未添加词库</p>
         {% endif %}
         <style>
@@ -21,13 +21,13 @@
         <iframe allow="autoplay" class="hidden" src="http://localhost:37421/media/voices/3.mp3"
                 style="display: none"></iframe>
         <audio id="word-audio" class="hidden" src="" autoplay></audio>
-        {% for word in words %}
+        {% for obj in object_list %}
             <div class="row my-2  word-and-translation">
-                <div class="col-3">{{ word.translation }}</div>
+                <div class="col-3">{{ obj.translation }}</div>
                 <div class="col-9">
-                    <span onclick="playVoice({{ word.id }})" class="panhaoyu-icon-play-voice"
+                    <span onclick="playVoice({{ obj.id }})" class="panhaoyu-icon-play-voice"
                           style="color: #50c4ff"></span>
-                    {{ word.word }}
+                    {{ obj.word }}
                 </div>
             </div>
         {% endfor %}
@@ -37,7 +37,7 @@
         <script>
             $(document).ready(async () => {
                 const word_ids = [
-                    {% for word in words %}{{ word.id }}, {% endfor %}
+                    {% for obj in object_list %}{{ obj.id }}, {% endfor %}
                 ]
                 for (let id of word_ids) {
                     playVoice(id)
