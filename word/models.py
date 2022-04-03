@@ -1,7 +1,7 @@
 import os
-import sys
-from django.db import models
+
 import ebbinghaus
+from django.db import models
 
 EBBINGHAUS_DATABASE = os.path.join(os.path.expanduser('~'), '.remember-me', 'word', 'ebbinghaus.db')
 ebbinghaus.set_database(EBBINGHAUS_DATABASE)
@@ -16,9 +16,12 @@ class WordModel(models.Model):
     modified_datetime = models.DateTimeField(auto_now=True)
 
     @classmethod
-    def create_ebbinghaus(self, word, translation):
+    def create_ebbinghaus(cls, word, translation):
         obj = WordModel.objects.create(word=word, translation=translation)
-        ebbinghaus.register(obj.id)
+        try:
+            ebbinghaus.register(obj.id)
+        except:
+            pass
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
