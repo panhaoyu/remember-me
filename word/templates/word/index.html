@@ -1,19 +1,32 @@
 {% extends 'word/base.html' %}
 
 {% block body %}
-    {% if words %}{% else %}
-        <p class="alert alert-warning">未添加词库</p>
-    {% endif %}
-    <style>
-        .word-and-translation {
-            font-size: 30px;
-            font-family: 微软雅黑, sans-serif;
-        }
-    </style>
-    {% for word in words %}
-        <div class="row my-2  word-and-translation">
-            <div class="col-4">{{ word.translation }}</div>
-            <div class="col-8">{{ word.word }}</div>
-        </div>
-    {% endfor %}
+    <div class="container">
+        {% if words %}{% else %}
+            <p class="alert alert-warning">未添加词库</p>
+        {% endif %}
+        <style>
+            .word-and-translation {
+                font-size: 40px;
+                font-family: 微软雅黑, sans-serif;
+            }
+        </style>
+        <script>
+            function playVoice(itemId) {
+                const audio = document.querySelector('#word-audio')
+                audio.setAttribute('src', `http://localhost:37421/media/voices/${itemId}.mp3`)
+            }
+        </script>
+        <audio id="word-audio" class="hidden" src="" autoplay></audio>
+        {% for word in words %}
+            <div class="row my-2  word-and-translation">
+                <div class="col-4">{{ word.translation }}</div>
+                <div class="col-8">
+                    <span onclick="playVoice({{ word.id }})" class="panhaoyu-icon-play-voice"
+                          style="color: #50c4ff"></span>
+                    {{ word.word }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
