@@ -1,3 +1,6 @@
+from functools import cached_property
+from typing import Optional
+
 from django.http import HttpRequest
 from django.urls import reverse_lazy
 from django.views import generic
@@ -10,6 +13,44 @@ class WordMixin(ContextMixin):
     site_name = 'Remember Me'
     request: HttpRequest
 
+    @cached_property
+    def word_list(self):
+        word_ids = self.request.session.get('word_list', [])
+        if word_ids:
+            word_list = WordModel.objects.filter(id__in=word_ids)
+        else:
+            word_list = WordModel.objects.order_by('stage')[:10]
+        self.request.session['word_list'] = [w.id for w in word_list]
+        return word_list
+
+    @cached_property
+    def current_word(self) -> Optional[WordModel]:
+        """当前正在学习的词汇，对于列表页是第0个词，对于第1页是第0个词，对于第2页是第1个词"""
+        current_word = self.request.session.get('word_index', 0)
+        if current_word < 10:
+            current_word = self.word_list[current_word]
+        else:
+            current_word = None
+        return current_word
+
+    @cached_property
+    def next_word(self) -> Optional[WordModel]:
+        word = self.request.session.get('word_index', 0) + 1
+        if word < 10:
+            word = self.word_list[word]
+        else:
+            word = None
+        return word
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            'current_word': self.current_word,
+            'next_word': self.next_word,
+            'word_list': self.word_list,
+        }
+
 
 class IndexView(WordMixin, generic.ListView):
     page_title = '即将学习的词汇'
@@ -17,14 +58,13 @@ class IndexView(WordMixin, generic.ListView):
     template_name = 'word/index.html'
 
     def get_queryset(self):
-        word_ids = self.request.session.get('word_list', [])
-        if word_ids:
-            word_list = WordModel.objects.filter(id__in=word_ids)
-        else:
-            word_list = WordModel.objects.order_by('stage')[:10]
-        self.request.session['word_list'] = [w.id for w in word_list]
         self.request.session['word_index'] = 0
-        return word_list
+        return self.word_list
+
+
+class DetailView(WordMixin, generic.DetailView):
+    template_name = 'word/detail.html'
+    model = WordModel
 
 
 class ChangeCurrentLearningSet(RedirectView):
@@ -36,3 +76,25 @@ class ChangeCurrentLearningSet(RedirectView):
     def get(self, request, *args, **kwargs):
         self.request.session.pop('word_list', None)
         return super().get(request, *args, **kwargs)
+
+
+class ActionView(
+    generic.detail.SingleObjectMixin,
+    WordMixin, RedirectView,
+):
+    model = WordModel
+
+    def get_redirect_url(self, *args, **kwargs):
+        action: str = kwargs.get('action')
+        score = {'remember': 1, 'forget': -2, 'not-seen': -1}[action]
+        obj: ActionView.model = self.get_object()
+        stage = obj.stage + score
+        stage = 0 if stage < 0 else stage
+        obj.stage = stage
+        obj.save()
+        if self.next_word:
+            self.request.session['word_index'] += 1
+            return reverse_lazy('word:detail', args=(self.next_word.id,))
+        else:
+            # 处理这一整批的数据
+            return reverse_lazy('word:change-current-learning-set')

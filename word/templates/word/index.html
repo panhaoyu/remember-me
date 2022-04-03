@@ -12,15 +12,6 @@
                 line-height: 80px;
             }
         </style>
-        <script>
-            function playVoice(itemId) {
-                const audio = document.querySelector('#word-audio')
-                audio.setAttribute('src', `http://localhost:37421/media/voices/${itemId}.mp3`)
-            }
-        </script>
-        <iframe allow="autoplay" class="hidden" src="http://localhost:37421/media/voices/3.mp3"
-                style="display: none"></iframe>
-        <audio id="word-audio" class="hidden" src="" autoplay></audio>
         {% for obj in object_list %}
             <div class="row my-2  word-and-translation">
                 <div class="col-3">{{ obj.translation }}</div>
@@ -31,14 +22,20 @@
                 </div>
             </div>
         {% endfor %}
-        <div class="row" style="margin-top: 100px">
-            <a class="col-12 mx-2 btn btn-info" href="{% url "word:change-current-learning-set" %}">换一批（4）</a>
+        <div class="d-flex flex-row justify-content-around" style="margin-top: 100px">
+            <a class="col-4 btn btn-info" href="{% url "word:detail" current_word.id %}">开始背诵（1）</a>
+            <a class="col-4 btn btn-info" href="{% url "word:change-current-learning-set" %}">换一批（4）</a>
         </div>
         <script>
+            const word_ids = [
+                {% for obj in object_list %}{{ obj.id }}, {% endfor %}
+            ]
+            addEventListener('keyup', ev => {
+                if (ev.key === '1') {
+                    location.pathname = '{% url "word:detail" current_word.id %}'
+                }
+            })
             $(document).ready(async () => {
-                const word_ids = [
-                    {% for obj in object_list %}{{ obj.id }}, {% endfor %}
-                ]
                 for (let id of word_ids) {
                     playVoice(id)
                     await new Promise(resolve => setTimeout(resolve, 3000))
