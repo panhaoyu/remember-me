@@ -67,15 +67,14 @@ class DetailView(WordMixin, generic.DetailView):
     model = WordModel
 
 
-class ChangeCurrentLearningSet(RedirectView):
+class ChangeCurrentLearningSet(WordMixin, RedirectView):
     """
     程序通过session来记录当前的学习列表，本视图用于重新进行一次随机，生成一批学习列表。
     """
-    url = reverse_lazy('word:index')
 
-    def get(self, request, *args, **kwargs):
+    def get_redirect_url(self, *args, **kwargs):
         self.request.session.pop('word_list', None)
-        return super().get(request, *args, **kwargs)
+        return reverse_lazy('word:detail', args=(self.current_word.id,))
 
 
 class ActionView(
@@ -97,4 +96,4 @@ class ActionView(
             return reverse_lazy('word:detail', args=(self.next_word.id,))
         else:
             # 处理这一整批的数据
-            return reverse_lazy('word:change-current-learning-set')
+            return reverse_lazy('word:index')

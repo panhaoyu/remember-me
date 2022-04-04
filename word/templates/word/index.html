@@ -32,7 +32,7 @@
             ]
             addEventListener('keyup', ev => {
                 if (ev.key === '1') {
-                    location.pathname = '{% url "word:detail" current_word.id %}'
+                    location.pathname = '{% url "word:change-current-learning-set" %}'
                 }
             })
             $(document).ready(async () => {

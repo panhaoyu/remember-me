@@ -12,6 +12,10 @@ ebbinghaus.set_database(EBBINGHAUS_DATABASE)
 class WordModel(models.Model):
     class Meta(models.Model.BaseMeta):
         verbose_name = '单词'
+        indexes = [
+            models.Index(fields=['stage']),
+            models.Index(fields=['is_active']),
+        ]
 
     is_active = models.BooleanField(default=True)
     word = models.CharField(max_length=128)
