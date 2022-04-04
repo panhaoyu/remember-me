@@ -19,6 +19,40 @@
         <script>
             {# 是否已完成这个单词的操作 #}
             let keys = []
+
+            function checkKeys() {
+                if (keys.length === 1) {
+                    document.querySelector('#word').innerHTML = "{{ object.word }}"
+                    playVoice({{ object.id }})
+                } else {
+                    {# 将形成三种状态：记住、记错、没印象。 #}
+                    if (keys[0] === 1 && keys[1] === 1) {
+                        {# 记住的单词，+1分； #}
+                        location.pathname = '{% url "word:action" object.id "remember" %}'
+                    } else if (keys[0] === 1 && keys[1] === 2) {
+                        {# 记错的单词，-2分； #}
+                        location.pathname = '{% url "word:action" object.id "forget" %}'
+                    } else {
+                        {# 没印象的单词，-1分； #}
+                        location.pathname = '{% url "word:action" object.id "not-seen" %}'
+                    }
+                }
+            }
+
+            addEventListener('contextmenu', ev => {
+                if (ev.button === 2) {
+                    keys.push(2)
+                    ev.preventDefault()
+                    checkKeys()
+                }
+            })
+            addEventListener('click', ev => {
+                if (ev.button === 0) {
+                    keys.push(1)
+                    ev.preventDefault()
+                    checkKeys()
+                }
+            })
             addEventListener('keyup', ev => {
                 switch (ev.key) {
                     case '`':
@@ -32,22 +66,7 @@
                         break
                 }
                 if ('12'.includes(ev.key)) {
-                    if (keys.length === 1) {
-                        document.querySelector('#word').innerHTML = "{{ object.word }}"
-                        playVoice({{ object.id }})
-                    } else {
-                        {# 将形成三种状态：记住、记错、没印象。 #}
-                        if (keys[0] === 1 && keys[1] === 1) {
-                            {# 记住的单词，+1分； #}
-                            location.pathname = '{% url "word:action" object.id "remember" %}'
-                        } else if (keys[0] === 1 && keys[1] === 2) {
-                            {# 记错的单词，-2分； #}
-                            location.pathname = '{% url "word:action" object.id "forget" %}'
-                        } else {
-                            {# 没印象的单词，-1分； #}
-                            location.pathname = '{% url "word:action" object.id "not-seen" %}'
-                        }
-                    }
+                    checkKeys()
                 }
             })
         </script>

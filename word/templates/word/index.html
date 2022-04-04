@@ -1,15 +1,15 @@
 {% extends 'word/base.html' %}
 
 {% block body %}
-    <div class="container">
+    <div class="container-fluid">
         {% if object_list %}{% else %}
             <p class="alert alert-warning">未添加词库</p>
         {% endif %}
         <style>
             .word-and-translation {
-                font-size: 30px;
+                font-size: 60px;
                 font-family: 微软雅黑, sans-serif;
-                line-height: 80px;
+                line-height: 100px;
             }
         </style>
         {% for obj in object_list %}
@@ -32,6 +32,11 @@
             ]
             addEventListener('keyup', ev => {
                 if (ev.key === '1') {
+                    location.pathname = '{% url "word:change-current-learning-set" %}'
+                }
+            })
+            addEventListener('click', ev => {
+                if (ev.button === 0) {
                     location.pathname = '{% url "word:change-current-learning-set" %}'
                 }
             })
