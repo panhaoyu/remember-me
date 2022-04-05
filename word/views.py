@@ -17,7 +17,7 @@ class WordMixin(ContextMixin):
     def word_list(self):
         word_ids = self.request.session.get('word_list', [])
         if word_ids:
-            word_list = WordModel.objects.filter(id__in=word_ids)
+            word_list = WordModel.objects.filter(id__in=word_ids, is_active=True)
         else:
             word_list = WordModel.objects.order_by('stage')[:10]
         self.request.session['word_list'] = [w.id for w in word_list]
@@ -85,8 +85,19 @@ class ActionView(
 
     def get_redirect_url(self, *args, **kwargs):
         action: str = kwargs.get('action')
-        score = {'remember': 1, 'forget': -2, 'not-seen': -1}[action]
         obj: ActionView.model = self.get_object()
+        match action:
+            case 'remember':
+                score = 1
+            case 'forget':
+                score = -2
+            case 'not-seen':
+                score = -1
+            case 'inactive':
+                score = 0
+                obj.is_active = False
+            case _:
+                raise ValueError('No such action')
         stage = obj.stage + score
         stage = 0 if stage < 0 else stage
         obj.stage = stage

@@ -14,11 +14,20 @@
                 2-1 完全没记住；
                 2-2 完全没记住。</p>
         </div>
+        <div class="flex-row">
+            <a class="btn btn-primary" href="{% url "word:action" object.id "inactive" %}"> 删除不重要词汇</a>
+        </div>
         <div id="translation" class="text-center">{{ object.translation }}</div>
         <div id="word" class="text-center"></div>
         <script>
             {# 是否已完成这个单词的操作 #}
             let keys = []
+            let word_id = `{{ object.id }}`
+
+            function inactive(ev) {
+                location.href = ``
+                ev.preventDefault()
+            }
 
             function checkKeys() {
                 if (keys.length === 1) {
@@ -39,21 +48,24 @@
                 }
             }
 
-            addEventListener('contextmenu', ev => {
+            document.addEventListener('contextmenu', ev => {
                 if (ev.button === 2) {
                     keys.push(2)
                     ev.preventDefault()
                     checkKeys()
                 }
             })
-            addEventListener('click', ev => {
+            document.addEventListener('click', ev => {
+                if (ev.target.tagName === 'A') {
+                    return
+                }
                 if (ev.button === 0) {
                     keys.push(1)
                     ev.preventDefault()
                     checkKeys()
                 }
             })
-            addEventListener('keyup', ev => {
+            document.addEventListener('keyup', ev => {
                 switch (ev.key) {
                     case '`':
                         playVoice({{ object.id }})
