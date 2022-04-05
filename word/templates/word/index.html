@@ -18,7 +18,11 @@
                 <div class="col-9">
                     <span onclick="playVoice({{ obj.id }})" class="panhaoyu-icon-play-voice"
                           style="color: #50c4ff"></span>
-                    <span>{{ obj.word }}</span>
+                    {% if obj.is_active %}
+                        <span>{{ obj.word }}</span>
+                    {% else %}
+                        <span class="text-decoration-line-through">{{ obj.word }}</span>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

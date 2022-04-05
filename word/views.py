@@ -16,10 +16,11 @@ class WordMixin(ContextMixin):
     @cached_property
     def word_list(self):
         word_ids = self.request.session.get('word_list', [])
+        qs = WordModel.objects.all()
         if word_ids:
-            word_list = WordModel.objects.filter(id__in=word_ids, is_active=True)
+            word_list = qs.filter(id__in=word_ids)
         else:
-            word_list = WordModel.objects.order_by('stage')[:10]
+            word_list = qs.filter(is_active=True).order_by('stage')[:10]
         self.request.session['word_list'] = [w.id for w in word_list]
         return word_list
 
