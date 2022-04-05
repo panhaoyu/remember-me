@@ -1,4 +1,5 @@
 from functools import cached_property
+from threading import Thread
 from typing import Optional
 
 import requests
@@ -69,14 +70,17 @@ class DetailView(WordMixin, generic.DetailView):
     template_name = 'word/detail.html'
     model = WordModel
 
-    def get_object(self, queryset=None):
-        obj: DetailView.model = super().get_object(queryset)
+    def _ensure_voice_exists(self, obj: WordModel):
         path = settings.MEDIA_ROOT / 'voices' / f'{obj.word}.mp3'
         path.parent.mkdir(exist_ok=True, parents=True)
         if not path.exists():
             data = requests.get(f'https://dict.youdao.com/dictvoice?type=0&audio={obj.word}').content
             with open(path, 'wb') as f:
                 f.write(data)
+
+    def get_object(self, queryset=None):
+        obj: DetailView.model = super().get_object(queryset)
+        Thread(target=self._ensure_voice_exists, args=(obj,)).start()
         return obj
 
 
