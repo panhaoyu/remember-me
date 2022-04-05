@@ -15,7 +15,8 @@
                 2-2 完全没记住。</p>
         </div>
         <div class="flex-row">
-            <a class="btn btn-primary" href="{% url "word:action" object.id "inactive" %}"> 删除不重要词汇</a>
+            <a class="btn btn-primary" href="{% url "word:action" object.id "inactive" %}">删除不重要词汇</a>
+            <a class="btn btn-primary" href="{% url "admin:word_wordmodel_change" object.id %}">管理后台</a>
         </div>
         <div id="translation" class="text-center">{{ object.translation }}</div>
         <div id="word" class="text-center"></div>
