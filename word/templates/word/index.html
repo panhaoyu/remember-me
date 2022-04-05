@@ -16,7 +16,7 @@
             <div class="row my-2  word-and-translation">
                 <div class="col-3">{{ obj.translation }}</div>
                 <div class="col-9">
-                    <span onclick="playVoice({{ obj.id }})" class="panhaoyu-icon-play-voice"
+                    <span onclick="playVoice(`{{ obj.word }}`)" class="panhaoyu-icon-play-voice"
                           style="color: #50c4ff"></span>
                     {% if obj.is_active %}
                         <span>{{ obj.word }}</span>
@@ -34,6 +34,9 @@
             const word_ids = [
                 {% for obj in object_list %}{{ obj.id }}, {% endfor %}
             ]
+            const words = [
+                {% for obj in object_list %}"{{ obj.word }}",{% endfor %}
+            ]
             addEventListener('keyup', ev => {
                 if (ev.key === '1') {
                     location.pathname = '{% url "word:change-current-learning-set" %}'
@@ -45,8 +48,8 @@
                 }
             })
             $(document).ready(async () => {
-                for (let id of word_ids) {
-                    playVoice(id)
+                for (let word of words) {
+                    playVoice(word)
                     await new Promise(resolve => setTimeout(resolve, 3000))
                 }
             })

@@ -1,6 +1,8 @@
 from functools import cached_property
 from typing import Optional
 
+import requests
+from django.conf import settings
 from django.http import HttpRequest
 from django.urls import reverse_lazy
 from django.views import generic
@@ -66,6 +68,16 @@ class IndexView(WordMixin, generic.ListView):
 class DetailView(WordMixin, generic.DetailView):
     template_name = 'word/detail.html'
     model = WordModel
+
+    def get_object(self, queryset=None):
+        obj: DetailView.model = super().get_object(queryset)
+        path = settings.MEDIA_ROOT / 'voices' / f'{obj.word}.mp3'
+        path.parent.mkdir(exist_ok=True, parents=True)
+        if not path.exists():
+            data = requests.get(f'https://dict.youdao.com/dictvoice?type=0&audio={obj.word}').content
+            with open(path, 'wb') as f:
+                f.write(data)
+        return obj
 
 
 class ChangeCurrentLearningSet(WordMixin, RedirectView):

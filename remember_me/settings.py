@@ -117,7 +117,7 @@ STATIC_ROOT = BASE_DIR / 'static'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_ROOT.mkdir(exist_ok=True, parents=True), MEDIA_ROOT.mkdir(exist_ok=True, parents=True)
-STATIC_ROOT, MEDIA_ROOT = str(STATIC_ROOT), str(MEDIA_ROOT)
+# STATIC_ROOT, MEDIA_ROOT = str(STATIC_ROOT), str(MEDIA_ROOT)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

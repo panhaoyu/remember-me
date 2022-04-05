@@ -33,7 +33,7 @@
             function checkKeys() {
                 if (keys.length === 1) {
                     document.querySelector('#word').innerHTML = "{{ object.word }}"
-                    playVoice({{ object.id }})
+                    playVoice("{{ object.word }}")
                 } else {
                     {# 将形成三种状态：记住、记错、没印象。 #}
                     if (keys[0] === 1 && keys[1] === 1) {
@@ -69,7 +69,7 @@
             document.addEventListener('keyup', ev => {
                 switch (ev.key) {
                     case '`':
-                        playVoice({{ object.id }})
+                        playVoice("{{ object.word }}")
                         break
                     case '1':
                         keys.push(1)
