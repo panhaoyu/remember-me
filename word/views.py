@@ -8,6 +8,7 @@ from django.http import HttpRequest
 from django.urls import reverse_lazy
 from django.views import generic
 from phy_django.views import RedirectView, ContextMixin
+from rest_framework import status
 
 from .models import WordModel
 
@@ -74,7 +75,17 @@ class DetailView(WordMixin, generic.DetailView):
         path = settings.MEDIA_ROOT / 'voices' / f'{obj.word}.mp3'
         path.parent.mkdir(exist_ok=True, parents=True)
         if not path.exists():
-            data = requests.get(f'https://dict.youdao.com/dictvoice?type=0&audio={obj.word}').content
+            response = requests.get(f'https://dict.youdao.com/dictvoice', params={
+                'type': 0, 'audio': obj.word
+            })
+            if response.status_code == status.HTTP_404_NOT_FOUND:
+                response = requests.get(f'https://dict.youdao.com/dictvoice', params={
+                    'type': 1, 'audio': obj.word
+                })
+            if response.status_code == status.HTTP_404_NOT_FOUND:
+                print(f'Not found mp3: {obj.word}')
+                return
+            data = response.content
             with open(path, 'wb') as f:
                 f.write(data)
 
